@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+author : Kigooo
+verson : 0.0.3
+update date : 2022-02-14
+-->
+<!--status，这个用于设置log4j2自身内部的信息输出 当设置成trace时 你会看到log4j2内部各种详细输出-->
+<!--monitorInterval 自动检测修改配置文件和重新配置本身 设置间隔秒数-->
+<configuration monitorInterval="30">
+    <!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+    <!--变量配置-->
+    <Properties>
+        <!-- 
+            格式参数说明：
+                %date 表示日期，
+                %thread 表示线程名，
+                %-5level：级别从左显示5个字符宽度 
+                %logger{36} 表示 Logger 名字最长36个字符
+                %msg：日志消息，
+                %n是换行符
+        -->
+        <!--文件路径可写绝对路径 或如下方相对路径 在根目录下自动生成-->
+        <property name="FILE_PATH" value="${bundle:application:log.path}${bundle:application:kgs.apName}" />
+        <!-- APP_LOG -->
+        <property name="APP_LOG_PATTERN" value="%date{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} %l - %msg%n" />
+        <property name="APP_LOG_FILE_NAME" value="kigooo_service" />
+        <!-- SYSTEM_LOG -->
+        <property name="SYSTEM_LOG_PATTERN" value="%date{yyyy-MM-dd HH:mm:ss} [%thread] %-5level - %msg%n" />
+        <property name="SYSTEM_LOG_FILE_NAME" value="system" />
+    </Properties>
+    <appenders>
+        <!--输出至控制台配置-->
+        <console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${APP_LOG_PATTERN}" />
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        </console>
+        <!--输出至文件配置1-->
+        <RollingFile name="APP_LOG" fileName="${FILE_PATH}/${APP_LOG_FILE_NAME}-CURRENT_TIME.log" filePattern="${FILE_PATH}/${APP_LOG_FILE_NAME}-%d{yyyy-MM-dd}.log">
+            <!--过滤级别-->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!--日志格式-->
+            <PatternLayout pattern="${APP_LOG_PATTERN}" charset="UTF-8" />
+            <!--备份周期 单位(天)-->
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+            <!--清除30天前的文件-->
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${FILE_PATH}" maxDepth="1">
+                    <IfFileName glob="*.log"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <!--输出至文件配置2-->
+        <RollingFile name="SYSTEM_LOG" fileName="${FILE_PATH}/${SYSTEM_LOG_FILE_NAME}-CURRENT_TIME.log" filePattern="${FILE_PATH}/${SYSTEM_LOG_FILE_NAME}-%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${SYSTEM_LOG_PATTERN}" charset="UTF-8" />
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${FILE_PATH}" maxDepth="1">
+                    <IfFileName glob="*.log"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </appenders>
+    <loggers>
+        <!--若是additivity设为false，则 子Logger 只会在自己的appender里输出，而不会在 父Logger 的appender里输出。-->
+        <Logger name="APP_LOG" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="APP_LOG"/>
+        </Logger>
+        <root level="info">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="SYSTEM_LOG"/>
+        </root>
+    </loggers>
+</configuration>
