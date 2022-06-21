@@ -16,7 +16,7 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>8</java.version>
-        <docker.image.prefix>kgmPrefix</docker.image.prefix>
+        <docker.image.prefix>kgm-prefix</docker.image.prefix>
 	</properties>
 	<dependencies>
 		<dependency>
