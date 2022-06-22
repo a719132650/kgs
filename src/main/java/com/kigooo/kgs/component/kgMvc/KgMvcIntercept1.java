@@ -52,7 +52,6 @@ public class KgMvcIntercept1 implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
         String requestUrl = httpServletRequest.getRequestURI().substring(env.getProperty("kgs.apName").length()); // /auth/login
         logger.info("url:"+requestUrl);
-        System.out.println("url:"+requestUrl);
         boolean allowVisitFlag = false;
 
         //无需登陆
