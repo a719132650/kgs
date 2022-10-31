@@ -146,7 +146,16 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.54</version>
         </dependency>
-	</dependencies>
+        <!--图片服务器-->
+        <!-- https://mvnrepository.com/artifact/io.minio/minio -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.2.1</version>
+        </dependency>
+
+
+    </dependencies>
 
 	<build>
         <finalName>kgs</finalName>
